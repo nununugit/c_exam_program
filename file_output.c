@@ -1,14 +1,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#define NUM 4
+#define NUM 7
+#define DTCNT  ((sizeof res)/(sizeof(res_t)))
 
 int main(){
   FILE *fp;
-  char *fname = "sample1.csv";
+  FILE *fp_out;
+  char *fname = "input_test.csv";
   int ret,i=0;
-  char buf[4][10];
-  int data[4];
+  char buf[NUM][10];
+  int data[NUM];
+  char fname_out[24];
 
   struct score {
     int number;
@@ -38,8 +41,6 @@ int main(){
     ++i;
     // printf("%d\t%d\t%d\t%d\n", data[0], data[1], data[2], data[3]);
   }
-  printf("\n");
-
    int s,t,tmp;
     for(s=0 ; s<NUM-1 ; s++){
         for(t=s+1;t<NUM;t++){
@@ -65,12 +66,29 @@ int main(){
 
 
 
-  for ( i = 0; i < 4; i++){
+  for ( i = 0; i < NUM; i++){
     printf("%d\t",scores[i].number);
     printf("%d\t",scores[i].japanese );
     printf("%d\t",scores[i].math );
     printf("%d\t\n",scores[i].english );
   }
+    int year = 2021 ,month = 4;
+    sprintf( fname_out, "%04d%02dresult.csv", year, month );
+    // ファイルのオープン
+    if( (fp_out = fopen( fname_out, "w" )) == NULL ) {
+        printf( "結果ファイルがオープンできませんでした\n" );
+        exit( 1 );
+    }
+    // ヘッダ行を出力する
+    fprintf( fp_out, "number,japanese,math,English\n" );
+    // 各データをカンマ区切りで出力する
 
-  fclose( fp );
+    for( i = 0; i < NUM; i++ ) {
+        fprintf( fp_out, "%d,%d,%d,%d\n",
+           scores[i].number, scores[i].japanese, scores[i].math, scores[i].english );
+    }
+  printf("\n");
+
+  printf( "%s に結果が出力されました\n", fname_out );
+  fclose( fp_out );
 }
