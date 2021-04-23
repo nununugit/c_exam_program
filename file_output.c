@@ -3,6 +3,27 @@
 #include <string.h>
 #define NUM 7
 #define DTCNT  ((sizeof res)/(sizeof(res_t)))
+  
+   struct score {
+    int number;
+    int japanese;
+    int math;
+    int english;
+  };
+
+void score_sort(struct score scores[]){
+   int s,t;
+   struct score tmp;
+    for(s=0 ; s<NUM-1 ; s++){
+        for(t=s+1;t<NUM;t++){
+            if(scores[t].japanese>scores[s].japanese){
+                tmp = scores[t];
+                scores[t] = scores[s];
+                scores[s] = tmp;
+            }
+        }
+    }
+}
 
 int main(){
   FILE *fp;
@@ -12,13 +33,6 @@ int main(){
   char buf[NUM][10];
   int data[NUM];
   char fname_out[24];
-
-  struct score {
-    int number;
-    int japanese;
-    int math;
-    int english;
-  };
 
   fp = fopen( fname, "r" );
   
@@ -39,32 +53,9 @@ int main(){
     scores[i].math = data[2];
     scores[i].english =data[3];
     ++i;
-    // printf("%d\t%d\t%d\t%d\n", data[0], data[1], data[2], data[3]);
   }
-   int s,t,tmp;
-    for(s=0 ; s<NUM-1 ; s++){
-        for(t=s+1;t<NUM;t++){
-            if(scores[t].japanese>scores[s].japanese){
-                tmp = scores[t].japanese;
-                scores[t].japanese = scores[s].japanese;
-                scores[s].japanese = tmp;
 
-                tmp = scores[t].math;
-                scores[t].math = scores[s].math;
-                scores[s].math = tmp;
-                
-                tmp = scores[t].english;
-                scores[t].english = scores[s].english;
-                scores[s].english = tmp;
-
-                tmp = scores[t].number;
-                scores[t].number = scores[s].number;
-                scores[s].number = tmp;
-            }
-        }
-    }
-
-
+    score_sort(scores);
 
   for ( i = 0; i < NUM; i++){
     printf("%d\t",scores[i].number);
@@ -72,22 +63,24 @@ int main(){
     printf("%d\t",scores[i].math );
     printf("%d\t\n",scores[i].english );
   }
-    int year = 2021 ,month = 4;
-    sprintf( fname_out, "%04d%02dresult.csv", year, month );
-    // ファイルのオープン
-    if( (fp_out = fopen( fname_out, "w" )) == NULL ) {
-        printf( "結果ファイルがオープンできませんでした\n" );
-        exit( 1 );
-    }
-    // ヘッダ行を出力する
-    fprintf( fp_out, "number,japanese,math,English\n" );
-    // 各データをカンマ区切りで出力する
 
-    for( i = 0; i < NUM; i++ ) {
-        fprintf( fp_out, "%d,%d,%d,%d\n",
-           scores[i].number, scores[i].japanese, scores[i].math, scores[i].english );
-    }
-  printf("\n");
+  int year = 2021 ,month = 4;
+  sprintf( fname_out, "%04d%02dresult.csv", year, month);
+  
+  // ファイルのオープン
+  if( (fp_out = fopen( fname_out, "w" )) == NULL ) {
+      printf( "結果ファイルがオープンできませんでした\n" );
+      exit( 1 );
+  }
+  
+  // ヘッダ行を出力する
+  fprintf( fp_out, "number,japanese,math,English\n" );
+  
+  // 各データをカンマ区切りで出力する
+  for( i = 0; i < NUM; i++ ) {
+      fprintf( fp_out, "%d,%d,%d,%d\n",
+          scores[i].number, scores[i].japanese, scores[i].math, scores[i].english );
+  }
 
   printf( "%s に結果が出力されました\n", fname_out );
   fclose( fp_out );
