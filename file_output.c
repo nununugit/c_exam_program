@@ -23,6 +23,8 @@ void score_sort(struct score scores[]){
             }
         }
     }
+
+    //aaaa
 }
 
 int main(){
