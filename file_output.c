@@ -3,7 +3,6 @@
 #include <string.h>
 #define NUM 7
 #define DTCNT  ((sizeof res)/(sizeof(res_t)))
-  
    struct score {
     int number;
     int japanese;
@@ -20,11 +19,14 @@ void score_sort(struct score scores[]){
                 tmp = scores[t];
                 scores[t] = scores[s];
                 scores[s] = tmp;
+                //bubble sort sort の安定性が高いため採用
             }
         }
     }
+}
 
-    //aaaa
+void clac_score(struct score scores[]){
+
 }
 
 int main(){
@@ -56,7 +58,7 @@ int main(){
     scores[i].english =data[3];
     ++i;
   }
-
+    clac_score(scores);
     score_sort(scores);
 
   for ( i = 0; i < NUM; i++){
