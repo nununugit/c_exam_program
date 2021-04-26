@@ -28,11 +28,11 @@
     int rank; //順位
   };
 
-void score_sort(struct score scores[]){
+void score_sort(struct score scores[],int ninzu){
    int s,t;
    struct score tmp;
-    for(s=0 ; s<NUM-1 ; s++){
-        for(t=s+1;t<NUM;t++){
+    for(s=0 ; s<ninzu-1 ; s++){
+        for(t=s+1;t<ninzu;t++){
             if(scores[t].score>scores[s].score){
                 tmp = scores[t];
                 scores[t] = scores[s];
@@ -59,24 +59,21 @@ int main(){
 
   char *fname = "input.csv";
   int ret , i=0 ,avg;
-  char buf[NUM][NUM];
+  char buf[NUM][100];
   int data[NUM];
   char fname_out[24];
 
+  //ファイルを開く
   fp = fopen( fname, "r" );
-  
   if( fp == NULL ){
     printf( "%sファイルが開けません\n", fname );
     return -1;
   }
 
-  printf("\n");
   
   fscanf(fp, "%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%s", buf[0], buf[1], buf[2], buf[3],buf[4],buf[5],buf[6],buf[7],buf[8],buf[9],buf[10],buf[11],buf[12]);
   
-  // printf("%s %s %s %s \n",buf[0], buf[1], buf[2], buf[3]);
-
-  struct score scores[NUM];
+  struct score scores[100];
 
   while((ret=fscanf(fp, "%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d ,%d", &data[0], &data[1], &data[2], &data[3], &data[4], &data[5], &data[6], &data[7], &data[8], &data[9], &data[10], &data[11], &data[12])) != EOF){
     scores[i].number =data[0];
@@ -96,7 +93,7 @@ int main(){
 
     scores[i].total_score = data[1]+data[2]+data[3];
     scores[i].total_grade =data[4]+data[5]+data[6]+data[7]+data[8]+data[9]+data[10]+data[11]+data[12];
-    scores[i].base_score =(data[4]+data[5]+(data[6]*1.4)+data[7]+data[8]+data[9]+data[10]+data[11]+(data[12]*1.4))*14.29;
+    scores[i].base_score =700*((data[4]+data[5]+(data[6]*1.4)+data[7]+data[8]+data[9]+data[10]+data[11]+(data[12]*1.4))/49);
     
     scores[i].score = scores[i].total_score + scores[i].base_score;
     ++i;
@@ -105,10 +102,9 @@ int main(){
   int ninzu = i;
   
   avg = avg_score(scores,ninzu);
-  score_sort(scores);
+  score_sort(scores,ninzu);
 
-
-
+  //ファイル出力
   int year = 2021 ,month = 4;
   sprintf( fname_out, "%04d%02dresult.csv", year, month);
   
@@ -122,7 +118,6 @@ int main(){
   fprintf( fp_out, "number , japanese_score , math_score,English_score, japanese_grade,ss_grade,math_grade, science_grade, music_grade , art_grade , pe_grade , helt_grade, english_grade , total_score , total_grade , base_score, score , result,rank\n" );
   
   // 各データをカンマ区切りで出力する
-
    for( i = 0; i < ninzu; i++ ) {
      if(scores[i].score>=avg){
          scores[i].result = 1;
@@ -130,7 +125,8 @@ int main(){
          scores[i].result = 0;
      }
         scores[i].rank = i+1;
-       fprintf( fp_out, "%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%5.2f,%5.2f,%d,%d\n",
+
+       fprintf( fp_out, "%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%4.0f,%4.0f,%d,%d\n",
          scores[i].number, 
          scores[i].japanese_score, 
          scores[i].math_score, 
