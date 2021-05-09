@@ -53,16 +53,17 @@ int avg_score(struct score scores[],int ninzu){
   return avg;
 }
 
-int main(){
+int main(int argc, char *argv[]){
   FILE *fp;
   FILE *fp_out;
 
   char *fname = "input.csv";
-  int ret , i=0 ,avg;
+  int ret , i=0 ,avg,num,flg=0;
   char buf[NUM][100];
   int data[NUM];
   char fname_out[24];
-
+  num = atoi(argv[1]);
+    
   //ファイルを開く
   fp = fopen( fname, "r" );
   if( fp == NULL ){
@@ -71,11 +72,14 @@ int main(){
   }
 
   
-  fscanf(fp, "%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%s", buf[0], buf[1], buf[2], buf[3],buf[4],buf[5],buf[6],buf[7],buf[8],buf[9],buf[10],buf[11],buf[12]);
+  fscanf(fp, "%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%s",
+  buf[0], buf[1], buf[2], buf[3],buf[4],buf[5],buf[6],buf[7],buf[8],buf[9],buf[10],buf[11],buf[12]);
   
-  struct score scores[100];
+  struct score scores[500];
 
-  while((ret=fscanf(fp, "%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d ,%d", &data[0], &data[1], &data[2], &data[3], &data[4], &data[5], &data[6], &data[7], &data[8], &data[9], &data[10], &data[11], &data[12])) != EOF){
+  while((ret=fscanf(fp, "%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d ,%d", 
+  &data[0], &data[1], &data[2], &data[3], &data[4], &data[5], &data[6],
+  &data[7], &data[8], &data[9], &data[10], &data[11], &data[12])) != EOF){
     scores[i].number =data[0];
     scores[i].japanese_score =data[1];
     scores[i].math_score = data[2];
@@ -115,7 +119,9 @@ int main(){
   }
   
   // ヘッダ行を出力する
-  fprintf( fp_out, "number , japanese_score , math_score,English_score, japanese_grade,ss_grade,math_grade, science_grade, music_grade , art_grade , pe_grade , helt_grade, english_grade , total_score , total_grade , base_score, score , result,rank\n" );
+  fprintf( fp_out, 
+  "number , japanese_score , math_score,English_score, japanese_grade,ss_grade,math_grade, science_grade, music_grade , art_grade , pe_grade , helt_grade, english_grade , total_score , total_grade , base_score, score , result,rank\n"
+  );
   
   // 各データをカンマ区切りで出力する
    for( i = 0; i < ninzu; i++ ) {
@@ -125,6 +131,30 @@ int main(){
          scores[i].result = 0;
      }
         scores[i].rank = i+1;
+
+        if(scores[i].number==num){
+           printf("%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%4.0f,%4.0f,%d,%d\n",
+         scores[i].number, 
+         scores[i].japanese_score, 
+         scores[i].math_score, 
+         scores[i].english_score,
+         scores[i].japanese_grade,
+         scores[i].ss_grade,
+         scores[i].math_grade,
+         scores[i].science_grade,
+         scores[i].music_grade,
+         scores[i].art_grade,
+         scores[i].pe_grade,
+         scores[i].helt_grade,
+         scores[i].english_grade,
+         scores[i].total_score,
+         scores[i].total_grade,
+         scores[i].base_score,
+         scores[i].score,
+         scores[i].result,
+         scores[i].rank
+         );
+         }
 
        fprintf( fp_out, "%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%4.0f,%4.0f,%d,%d\n",
          scores[i].number, 
@@ -147,6 +177,7 @@ int main(){
          scores[i].result,
          scores[i].rank
          );
+
    }
 
   printf( "%s に結果が出力されました\n", fname_out );
